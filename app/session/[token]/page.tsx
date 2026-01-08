@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use, useRef } from 'react';
 import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getPatientSession, getPatientResponses, submitResponse, completeSession, logSecurityEvent as logSecurityEventAction } from '@/app/actions';
 import { templates, Question } from '@/data/templates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,13 +29,7 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
   // Security Logger
   const logSecurityEvent = async (type: string, details?: string) => {
     // Fire and forget
-    supabase.from('security_logs').insert({
-        session_id: token,
-        event_type: type,
-        details: details
-    }).then(({ error }) => {
-        if (error) console.error("Logged sec error:", error);
-    });
+    logSecurityEventAction(token, type, details).catch(err => console.error(err));
   };
 
   // We need to calculate visible questions BEFORE the useEffect that depends on them.
@@ -174,15 +168,10 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
 
   useEffect(() => {
     const fetchSession = async () => {
-      const { data, error } = await supabase
-        .from('sessions')
-        .select('*')
-        .eq('id', token)
-        .single();
-      
-      const { data: responsesData } = await supabase.from('responses').select('*').eq('session_id', token);
+      const data = await getPatientSession(token);
+      const responsesData = await getPatientResponses(token);
 
-      if (error || !data) {
+      if (!data) {
         setLoading(false);
         return; // Handle 404
       }
@@ -220,21 +209,24 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
     // Optimistic update - store the score in responses to mark as answered
     setResponses(prev => ({ ...prev, [questionId]: score }));
 
-    // Send to DB
-    const { error } = await supabase
-      .from('responses')
-      .upsert({
-        session_id: token,
-        question_id: questionId,
-        value: score
-      }, { onConflict: 'session_id,question_id' }); 
-      
-      if (error) {
-          console.error("Error saving response:", error);
-      }
-      
-      // Auto-scroll logic could go here if we want to smooth scroll to bottom
-      // window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    // Send to DB via Server Action
+    try {
+        await submitResponse(token, questionId, score);
+    } catch (e) {
+        console.error("Error saving response:", e);
+    }
+  };
+
+  const handleFinish = async () => {
+    if (!confirm('Czy na pewno chcesz zakończyć test? Nie będzie można już zmienić odpowiedzi.')) return;
+
+    try {
+        await completeSession(token);
+        setSession((prev: any) => ({ ...prev, status: 'completed' }));
+    } catch (e) {
+        console.error(e);
+        alert('Wystąpił błąd podczas wysyłania odpowiedzi.');
+    }
   };
     
   // Helpers to decode saved score back to option index for display highlights
@@ -248,6 +240,29 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
 
   if (loading) return <div className="p-8 text-center">Ładowanie testu...</div>;
   if (!session || !template) return <div className="p-8 text-center">Sesja nie znaleziona lub wygasła.</div>;
+
+  if (session.status === 'completed') {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+            <Card className="max-w-md w-full shadow-xl border-green-100 bg-white animate-in zoom-in-95 duration-500">
+                <CardContent className="pt-12 pb-12 text-center space-y-6">
+                    <div className="mx-auto w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-2 shadow-inner">
+                        <Check className="w-10 h-10 text-green-600" />
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-bold text-slate-900">Dziękujemy!</h1>
+                        <p className="text-slate-500 max-w-xs mx-auto">
+                            Twoje odpowiedzi zostały pomyślnie zapisane. Test został zakończony.
+                        </p>
+                    </div>
+                    <div className="pt-4">
+                        <p className="text-sm text-slate-400">Możesz teraz bezpiecznie zamknąć tę kartę.</p>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+  }
 
   if (!hasConsented) {
     return (
@@ -374,7 +389,10 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
              {Object.keys(responses).length < template.questions.length ? (
                  <p>Odpowiedz na pytania, aby wyświetlić kolejne.</p>
              ) : (
-                 <Button className="w-full text-lg h-14 mt-4" disabled={false}>
+                 <Button 
+                    className="w-full text-lg h-14 mt-4 bg-slate-900 hover:bg-slate-800" 
+                    onClick={handleFinish}
+                 >
                     Prześlij odpowiedzi
                  </Button>
              )}
