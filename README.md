@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real-Time Psychological Assessment Tool
+
+This is a **Next.js 16** application with **Supabase Realtime** designed for conducting psychological assessments (like Big 5, Beck Depression Inventory) during online calls.
+
+## Features
+- **Instant Deployment**: Uses a simple JSON template system for scales.
+- **Real-Time Monitoring**: See patient answers instantly as they select them (powered by Supabase Realtime).
+- **Patient UX**: Clean, distraction-free interface.
+- **Diagnostic UX**: Data-dense dashboard for the clinician.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Setup Supabase
+1. Create a new project at [supabase.com](https://supabase.com).
+2. Go to the **SQL Editor** in Supabase and run the content of `supabase_schema.sql` included in this reference.
+   - This creates `sessions` and `responses` tables.
+   - It enables Realtime replication for these tables.
+3. Get your **Project URL** and **anon public key** from Project Settings > API.
 
+### 2. Configure Environment
+1. Copy `.env.local.example` to `.env.local`.
+2. Fill in your Supabase credentials:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_PUB_KEY=...
+   ```
+
+### 3. Run the App
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Usage
+1. Open `http://localhost:3000` (Admin Console).
+2. Click "Start Session" on a test (e.g., Big 5).
+3. Copy the **Patient Link** and open it in an incognito window (simulating the patient).
+4. Click **Open Admin View** in the original window.
+5. Watch the admin view update instantly as you fill out the form in the patient window.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Adding Scales
+Edit `data/templates.ts` to add new questionnaires. The system supports `scale` (1-N) and `choice` (radio) types.
