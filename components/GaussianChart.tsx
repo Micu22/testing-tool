@@ -102,7 +102,7 @@ export function GaussianChart({ items }: GaussianChartProps) {
                    x={x} y={height - padding + 15} 
                    textAnchor="middle" 
                    fontSize="10" 
-                   className="fill-slate-400 font-mono"
+                   className="fill-neutral-400 font-mono"
                  >
                    {val}
                  </text>
@@ -197,7 +197,7 @@ export function GaussianChart({ items }: GaussianChartProps) {
         {/* Legend */}
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 px-4 print:hidden">
            {items.map((item, i) => (
-             <div key={i} className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+             <div key={i} className="flex items-center gap-2 text-xs font-semibold text-neutral-700">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></span>
                 <span>{item.label}</span>
              </div>

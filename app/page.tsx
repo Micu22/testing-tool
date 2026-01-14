@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { templates } from '@/data/templates';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,10 +71,10 @@ export default function Home() {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
+    <main className="min-h-screen bg-[#f2f2f2] p-8">
       {/* Delete Confirmation Modal Overlay */}
       {sessionToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/50 backdrop-blur-sm p-4">
             <Card className="w-full max-w-md shadow-xl border-red-200">
                 <CardHeader>
                     <div className="mx-auto bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mb-4">
@@ -86,7 +87,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase text-slate-500">Podaj hasło administratora</label>
+                        <label className="text-xs font-semibold uppercase text-neutral-500">Podaj hasło administratora</label>
                         <Input 
                             type="password" 
                             placeholder="Hasło..." 
@@ -95,7 +96,7 @@ export default function Home() {
                         />
                     </div>
                 </CardContent>
-                <CardFooter className="flex gap-2 justify-end bg-slate-50 rounded-b-lg">
+                <CardFooter className="flex gap-2 justify-end bg-neutral-50 rounded-b-lg">
                     <Button variant="ghost" onClick={() => { setSessionToDelete(null); setDeletePassword(''); }}>
                         Anuluj
                     </Button>
@@ -108,9 +109,20 @@ export default function Home() {
       )}
 
       <div className="max-w-4xl mx-auto space-y-8">
-        <header>
-          <h1 className="text-3xl font-bold text-slate-900">Narzędzie Diagnostyki Psychologicznej</h1>
-          <p className="text-slate-500">Wybierz test, aby rozpocząć nową sesję z pacjentem.</p>
+        <header className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="shrink-0 flex justify-center md:justify-start">
+            <Image 
+              src="/favicon.svg" 
+              alt="Logo" 
+              width={64} 
+              height={64} 
+              className="h-16 w-auto"
+            />
+          </div>
+          <div className="text-center md:text-left">
+            <h1 className="text-3xl font-bold text-neutral-900">Narzędzie Diagnostyki Psychologicznej</h1>
+            <p className="text-neutral-500">Wybierz test, aby rozpocząć nową sesję z pacjentem.</p>
+          </div>
         </header>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -118,7 +130,7 @@ export default function Home() {
             <Card key={template.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>{template.title}</CardTitle>
-                <p className="text-sm text-slate-500 mt-2">{template.description}</p>
+                <p className="text-sm text-neutral-500 mt-2">{template.description}</p>
               </CardHeader>
               <CardContent>
                 <Button 
@@ -171,16 +183,16 @@ export default function Home() {
         )}
 
         <div className="pt-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-neutral-800 mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 Historia sesji
             </h2>
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
                 {pastSessions.length === 0 ? (
-                    <div className="p-8 text-center text-slate-500">Brak sesji w historii.</div>
+                    <div className="p-8 text-center text-neutral-500">Brak sesji w historii.</div>
                 ) : (
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-500 border-b border-slate-200">
+                        <thead className="bg-neutral-50 text-neutral-500 border-b border-neutral-200">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Data</th>
                                 <th className="px-6 py-3 font-medium">Pacjent</th>
@@ -188,24 +200,24 @@ export default function Home() {
                                 <th className="px-6 py-3 font-medium text-right">Akcje</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-neutral-100">
                             {pastSessions.map(session => (
-                                <tr key={session.id} className="hover:bg-slate-50">
-                                    <td className="px-6 py-3 font-mono text-slate-500">
+                                <tr key={session.id} className="hover:bg-neutral-50">
+                                    <td className="px-6 py-3 font-mono text-neutral-500">
                                         {new Date(session.created_at).toLocaleDateString('pl-PL')} {new Date(session.created_at).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
                                     </td>
-                                    <td className="px-6 py-3 text-slate-900 font-medium">
-                                        {session.patient_name || <span className="text-slate-400 italic">Anonimowy</span>}
+                                    <td className="px-6 py-3 text-neutral-900 font-medium">
+                                        {session.patient_name || <span className="text-neutral-400 italic">Anonimowy</span>}
                                     </td>
                                     <td className="px-6 py-3">
-                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${session.status === 'completed' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'}`}>
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${session.status === 'completed' ? 'bg-blue-50 text-blue-700' : 'bg-neutral-100 text-neutral-600'}`}>
                                             {session.status === 'completed' ? 'Zakończona' : 'W toku'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-3 text-right space-x-1">
                                         <Link href={`/admin/${session.id}`} title="Podgląd na żywo">
                                             <Button variant="ghost" size="sm">
-                                                <ExternalLink className="w-4 h-4 text-slate-500" />
+                                                <ExternalLink className="w-4 h-4 text-neutral-500" />
                                             </Button>
                                         </Link>
                                         {session.status === 'completed' && (

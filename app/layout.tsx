@@ -26,6 +26,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180' },
     ],
   },
+  themeColor: '#1c2d8f',
   manifest: '/site.webmanifest',
   appleWebApp: {
     title: 'Psycholog Michał',

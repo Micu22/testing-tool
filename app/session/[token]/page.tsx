@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, use, useRef } from 'react';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getPatientSession, getPatientResponses, submitResponse, completeSession, logSecurityEvent as logSecurityEventAction } from '@/app/actions';
 import { templates, Question } from '@/data/templates';
@@ -243,20 +244,20 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
 
   if (session.status === 'completed') {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#f2f2f2] p-4">
             <Card className="max-w-md w-full shadow-xl border-green-100 bg-white animate-in zoom-in-95 duration-500">
                 <CardContent className="pt-12 pb-12 text-center space-y-6">
                     <div className="mx-auto w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-2 shadow-inner">
                         <Check className="w-10 h-10 text-green-600" />
                     </div>
                     <div className="space-y-2">
-                        <h1 className="text-2xl font-bold text-slate-900">Dziękujemy!</h1>
-                        <p className="text-slate-500 max-w-xs mx-auto">
+                        <h1 className="text-2xl font-bold text-neutral-900">Dziękujemy!</h1>
+                        <p className="text-neutral-500 max-w-xs mx-auto">
                             Twoje odpowiedzi zostały pomyślnie zapisane. Test został zakończony.
                         </p>
                     </div>
                     <div className="pt-4">
-                        <p className="text-sm text-slate-400">Możesz teraz bezpiecznie zamknąć tę kartę.</p>
+                        <p className="text-sm text-neutral-400">Możesz teraz bezpiecznie zamknąć tę kartę.</p>
                     </div>
                 </CardContent>
             </Card>
@@ -266,35 +267,35 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
 
   if (!hasConsented) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4">
-        <Card className="max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-slate-800 bg-white">
-          <CardHeader className="border-b border-slate-100 pb-4">
-            <CardTitle className="text-2xl text-center text-slate-900">Ważne informacje</CardTitle>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/95 backdrop-blur-sm p-4">
+        <Card className="max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-neutral-800 bg-white">
+          <CardHeader className="border-b border-neutral-100 pb-4">
+            <CardTitle className="text-2xl text-center text-neutral-900">Ważne informacje</CardTitle>
           </CardHeader>
           <CardContent className="pt-6 space-y-6">
             <div className="space-y-4">
-              <div className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg border border-slate-100 transition-colors hover:bg-slate-100 cursor-pointer" onClick={() => setConsent1(!consent1)}>
+              <div className="flex items-start space-x-3 p-4 bg-neutral-50 rounded-lg border border-neutral-100 transition-colors hover:bg-neutral-100 cursor-pointer" onClick={() => setConsent1(!consent1)}>
                 <input
                   type="checkbox"
                   id="consent1"
-                  className="mt-1 h-5 w-5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                  className="mt-1 h-5 w-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 cursor-pointer"
                   checked={consent1}
                   onChange={(e) => setConsent1(e.target.checked)}
                 />
-                <label htmlFor="consent1" className="text-sm font-medium leading-relaxed text-slate-700 cursor-pointer pointer-events-none">
+                <label htmlFor="consent1" className="text-sm font-medium leading-relaxed text-neutral-700 cursor-pointer pointer-events-none">
                   Potwierdzam, że wykonuję ten test zgodnie z instrukcją od psychologa, jestem z nim w kontakcie lub otrzymałem/am wyraźne polecenie wykonania go samodzielnie.
                 </label>
               </div>
 
-              <div className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg border border-slate-100 transition-colors hover:bg-slate-100 cursor-pointer" onClick={() => setConsent2(!consent2)}>
+              <div className="flex items-start space-x-3 p-4 bg-neutral-50 rounded-lg border border-neutral-100 transition-colors hover:bg-neutral-100 cursor-pointer" onClick={() => setConsent2(!consent2)}>
                 <input
                   type="checkbox"
                   id="consent2"
-                  className="mt-1 h-5 w-5 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                  className="mt-1 h-5 w-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 cursor-pointer"
                   checked={consent2}
                   onChange={(e) => setConsent2(e.target.checked)}
                 />
-                <label htmlFor="consent2" className="text-sm font-medium leading-relaxed text-slate-700 cursor-pointer pointer-events-none">
+                <label htmlFor="consent2" className="text-sm font-medium leading-relaxed text-neutral-700 cursor-pointer pointer-events-none">
                   Rozumiem, że treść kwestionariusza oraz całe narzędzie są chronione w celu zapewnienia rzetelności pomiaru. <span className="font-bold text-red-600">Zobowiązuję się pod żadnym pozorem nie robić zrzutów ekranu, nie kopiować ani nie nagrywać wyświetlanych pytań.</span>
                 </label>
               </div>
@@ -316,13 +317,16 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
   const visibleQuestions = sortedQuestions.slice(0, visibleCount);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden">
-      <header className="flex-none bg-white border-b border-slate-200 shadow-sm z-10 px-4 py-6">
+    <div className="h-screen flex flex-col bg-[#f2f2f2] text-neutral-900 font-sans overflow-hidden">
+      <header className="flex-none  border-b border-neutral-200 shadow-sm z-10 px-4 py-6">
         <div className="max-w-70ch mx-auto text-center">
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">{template.title}</h1>
-          <p className="mt-2 text-sm text-slate-500 mb-6">{template.description}</p>
+          <div className="flex justify-center mb-6">
+            <Image src="/favicon.svg" alt="Logo" width={48} height={48} className="h-12 w-auto" />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-neutral-900">{template.title}</h1>
+          <p className="mt-2 text-sm text-neutral-500 mb-6">{template.description}</p>
           {template.scaleLegend && (
-            <div className="inline-flex flex-wrap md:flex-nowrap md:justify-center gap-x-6 gap-y-2 font-medium text-slate-600 bg-slate-50 px-6 py-3 rounded-xl border border-slate-100">
+            <div className="inline-flex flex-wrap md:flex-nowrap md:justify-center gap-x-6 gap-y-2 font-medium text-neutral-600 bg-neutral-50 px-6 py-3 rounded-xl border border-neutral-100">
               {template.scaleLegend.map((item: any, index: number) => (
                 <span key={index}>{item.label}</span>
               ))}
@@ -344,11 +348,11 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
             <div 
               key={q.id} 
               ref={index === visibleQuestions.length - 1 ? lastQuestionRef : null}
-              className="py-4 border-b border-slate-100 last:border-0 fade-in-up"
+              className="py-4 border-b border-neutral-100 last:border-0 fade-in-up"
             >
                 <div className="flex gap-4 mb-4">
-                    <span className="font-mono text-slate-400 font-bold pt-1 min-w-[1.5rem] text-right">{num}.</span>
-                    <h3 className="text-lg font-medium text-slate-900 leading-relaxed pt-0.5">{q.text}</h3>
+                    <span className="font-mono text-neutral-400 font-bold pt-1 min-w-[1.5rem] text-right">{num}.</span>
+                    <h3 className="text-lg font-medium text-neutral-900 leading-relaxed pt-0.5">{q.text}</h3>
                 </div>
                 
                 {q.type === 'scale' ? (
@@ -361,17 +365,17 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
                                 type="button"
                                 onClick={() => handleAnswer(q.id, idx, isReversed)}
                                 className={cn(
-                                    "w-12 h-12 rounded-full border-2 cursor-pointer text-lg font-bold transition-all flex items-center justify-center hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2",
+                                    "w-12 h-12 rounded-full border-2 cursor-pointer text-lg font-bold transition-all flex items-center justify-center hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2",
                                     selectedIdx === idx 
-                                        ? "bg-slate-900 text-white border-slate-900 hover:bg-slate-800" 
-                                        : "bg-white text-slate-900 border-slate-200"
+                                        ? "bg-neutral-900 text-white border-neutral-900 hover:bg-neutral-800" 
+                                        : "bg-white text-neutral-900 border-neutral-200"
                                 )}
                                 aria-label={`${optionToDisplay(idx)}`}
                                 aria-pressed={selectedIdx === idx}
                              >
                                 {optionToDisplay(idx)}
                              </button>
-                             <span className="text-xl font-bold text-slate-500">
+                             <span className="text-xl font-bold text-neutral-500">
                                 {optionToDisplay(idx)}
                              </span>
                         </div>
@@ -385,12 +389,12 @@ export default function PatientSession({ params }: { params: Promise<{ token: st
             </div>
           )})}
 
-          <div className="pt-8 text-center text-slate-400 text-sm">
+          <div className="pt-8 text-center text-neutral-400 text-sm">
              {Object.keys(responses).length < template.questions.length ? (
                  <p>Odpowiedz na pytania, aby wyświetlić kolejne.</p>
              ) : (
                  <Button 
-                    className="w-full text-lg h-14 mt-4 bg-slate-900 hover:bg-slate-800" 
+                    className="w-full text-lg h-14 mt-4 bg-neutral-900 hover:bg-neutral-800" 
                     onClick={handleFinish}
                  >
                     Prześlij odpowiedzi
