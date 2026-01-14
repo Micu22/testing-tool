@@ -21,3 +21,17 @@ alter table responses add constraint responses_session_id_question_id_key unique
 -- Enable Realtime for responses
 alter publication supabase_realtime add table responses;
 alter publication supabase_realtime add table sessions;
+
+-- Enable Row Level Security (RLS)
+alter table sessions enable row level security;
+alter table responses enable row level security;
+
+-- Policy: Allow public read access to responses if the JWT has the matching session_id
+-- This allows the Admin Dashboard to subscribe to changes using a scoped token.
+create policy "Allow read access via session token"
+on responses
+for select
+to public
+using (
+  session_id::text = (auth.jwt() ->> 'session_id')
+);

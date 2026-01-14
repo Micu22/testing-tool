@@ -12,7 +12,7 @@ import { calculateSten } from '@/lib/sten_scoring';
 import { GaussianChart } from '@/components/GaussianChart';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Save, Printer, Share2, ArrowLeft } from 'lucide-react';
+import { Save, Printer, Share2, ArrowLeft, Check } from 'lucide-react';
 import Link from 'next/link';
 
 // Create a client component specific supabase instance factory
@@ -44,6 +44,7 @@ export default function AdminDashboard({ params }: { params: Promise<{ token: st
   const [patientAge, setPatientAge] = useState<number>(29);
   const [patientName, setPatientName] = useState('');
   const [isSavingName, setIsSavingName] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   
   // Graph selection
   const [activeGraphTrait, setActiveGraphTrait] = useState<string | null>(null);
@@ -130,6 +131,15 @@ export default function AdminDashboard({ params }: { params: Promise<{ token: st
     }
   };
 
+  const handleCopyLink = async () => {
+    const link = `${window.location.origin}/session/${token}`;
+    await navigator.clipboard.writeText(link);
+    setCopySuccess(true);
+    setTimeout(() => {
+        setCopySuccess(false);
+    }, 2000);
+  };
+
   const getQuestionNumber = (id: string) => {
     const match = id.match(/q(\d+)/);
     return match ? parseInt(match[1]) : 0;
@@ -213,7 +223,11 @@ export default function AdminDashboard({ params }: { params: Promise<{ token: st
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <Button className="outline" onClick={() => window.print()}>
+                <Button variant="outline" onClick={handleCopyLink} className={cn("transition-all", copySuccess && "border-green-500 text-green-600 bg-green-50")}>
+                    {copySuccess ? <Check className="w-4 h-4 mr-2" /> : <Share2 className="w-4 h-4 mr-2" />}
+                    {copySuccess ? "Skopiowano" : "Kopiuj Link"}
+                </Button>
+                <Button variant="outline" onClick={() => window.print()}>
                     <Printer className="w-4 h-4 mr-2" />
                     Drukuj Raport / PDF
                 </Button>

@@ -7,3 +7,6 @@ create table security_logs (
 );
 
 alter publication supabase_realtime add table security_logs;
+
+-- Enable Row Level Security (RLS)
+alter table security_logs enable row level security;
